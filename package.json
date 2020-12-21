@@ -1,0 +1,23 @@
+{
+  "name": "covidsim",
+  "version": "1.0.0",
+  "description": "Covid 19 simulator",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "test": "node main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/peteole/covidsim.git"
+  },
+  "keywords": [
+    "Covid-19"
+  ],
+  "author": "Ole Petersen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/peteole/covidsim/issues"
+  },
+  "homepage": "https://github.com/peteole/covidsim#readme"
+}
