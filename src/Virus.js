@@ -1,4 +1,4 @@
-import { PersonLog } from "./Plot";
+import { PersonLog } from "./Plot.js";
 
 
 export class Virus {
@@ -11,8 +11,8 @@ export class Virus {
      * @returns {number} - probability of being infected and able to spread the virus at that date
      */
     static getAcuteInfectionProbability(log, date) {
-        const startInfectionPeriod = new Date(date).setDate(date.getDate() - Virus.endOfInfectiosness);
-        const endInfectionPeriod = new Date(date).setDate(date.getDate() - Virus.startOfInfectiosness);
+        const startInfectionPeriod = new Date(date);startInfectionPeriod.setDate(date.getDate() - Virus.endOfInfectiosness);
+        const endInfectionPeriod = new Date(date);endInfectionPeriod.setDate(date.getDate() - Virus.startOfInfectiosness);
         return log.getInfectionProbability(endInfectionPeriod) - log.getInfectionProbability(startInfectionPeriod);
     }
 }

@@ -1,7 +1,7 @@
-import { Person } from "./Person";
-import { Contact } from "./Contact";
-import { algorithmicConstants } from "./constants";
-import { Virus } from "./Virus";
+import { Person } from "./Person.js";
+import { Contact } from "./Contact.js";
+import { algorithmicConstants } from "./constants.js";
+import { Virus } from "./Virus.js";
 
 /**
  * @typedef {Object} InfectionProbability - Datapoint for being infected at a given time
@@ -15,7 +15,7 @@ export class PersonLog {
     /**
      * 
      * @param {InfectionProbability} initialProbability 
-     * @param {(date:Date)=>{contactDensity:number,contactIntensity:number}} untracked 
+     * @param {import("./Person").untrackedActivity} untracked 
      */
     constructor(initialProbability, untracked) {
         this.datapoints = [initialProbability];
@@ -27,10 +27,15 @@ export class PersonLog {
      * @returns {number} probability of infection
      */
     getInfectionProbability(date) {
-        const lastDatapoint = this.datapoints[this.datapoints.length - 1];
-        let probability = lastDatapoint.value;
+        let datapoint = this.datapoints[0];
+        for (let i = 1; i < this.datapoints.length; i++) {
+            if (this.datapoints[i].date.getTime() > date)
+                break;
+            datapoint = this.datapoints[i];
+        }
+        let probability = datapoint.value;
         //compute offset due to untracked contacts
-        for (let day = lastDatapoint.date; day.getTime() < date.getTime(); day.setTime(day.getTime() + algorithmicConstants.deltaT * 1000 * 60 * 60)) {
+        for (let day = new Date(datapoint.date); day.getTime() < date.getTime(); day.setTime(day.getTime() + algorithmicConstants.deltaT * 1000 * 60 * 60 * 24)) {
             const dayInfo = this.untracked(date);
             probability = 1 - (1 - probability) * Math.pow(1 - genericInfectionRate(date) * dayInfo.contactIntensity, dayInfo.contactDensity * algorithmicConstants.deltaT);
         }
@@ -39,18 +44,19 @@ export class PersonLog {
     /**
      * 
      * @param {number} otherActiveInfectionProbability - probability of the contact person being actively infected at the time of contact
-     * @param {*} date 
+     * @param {Date} date 
      */
     addContact(otherActiveInfectionProbability, date) {
-
+        throw new Error("This method is not yet implemented");
     }
 }
 
 /**
  * Plot of an infection. Provides the functionality to compute infection probabilities for all persons involved.
  */
-class Plot {
-    constructor() {
+export class Plot {
+    constructor(initialDate = new Date()) {
+        this.initialDate = initialDate;
         /**@type {Set<Person>}*/
         this.persons = new Set();
         /** @type {Contact[]} */
@@ -70,6 +76,9 @@ class Plot {
                 return;
             }
         }
+        this.contacts.push(toAdd);
+        this.persons.add(toAdd.a);
+        this.persons.add(toAdd.b);
     }
 
     /**
@@ -79,7 +88,7 @@ class Plot {
         /**@type {Map<Person,PersonLog>} */
         let personToLog = new Map();
         for (let person of this.persons) {
-            personToLog.set(person, new PersonLog(0, person.externalActivity));
+            personToLog.set(person, new PersonLog({ date: this.initialDate, value: genericInfectionRate(this.initialDate) }, person.externalActivity));
         }
         for (let contact of this.contacts) {
             const logA = personToLog.get(contact.a);

@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/peteole/covidsim/issues"
   },
-  "homepage": "https://github.com/peteole/covidsim#readme"
+  "homepage": "https://github.com/peteole/covidsim#readme",
+  "dependencies": {
+    "nodeplotlib": "^0.6.5"
+  }
 }
