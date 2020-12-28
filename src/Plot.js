@@ -52,62 +52,21 @@ export class PersonLog {
 }
 
 /**
- * Plot of an infection. Provides the functionality to compute infection probabilities for all persons involved.
+ * Plot of an infection. Includes infection dates for all actors.
  */
 export class Plot {
-    constructor(initialDate = new Date()) {
-        this.initialDate = initialDate;
-        /**@type {Set<Person>}*/
-        this.persons = new Set();
-        /** @type {Contact[]} */
-        this.contacts = [];
-    }
-    /**@param {Person} toAdd */
-    addPerson(toAdd) {
-        this.persons.add(toAdd);
-    }
-    /** @param {Contact} toAdd - contact to be added to the procession list */
-    addContact(toAdd) {
-        for (let i = 0; i < this.contacts.length; i++) {
-            if (toAdd.date.getTime() < this.contacts[i].date.getTime()) {
-                this.contacts.splice(i, 0, toAdd);
-                this.persons.add(toAdd.a);
-                this.persons.add(toAdd.b);
-                return;
-            }
-        }
-        this.contacts.push(toAdd);
-        this.persons.add(toAdd.a);
-        this.persons.add(toAdd.b);
-    }
-
     /**
-     * Infection probability log in the from of a map from all persons to their logs
+     * 
+     * @param {Set<Person>} persons 
      */
-    get log() {
-        /**@type {Map<Person,PersonLog>} */
-        let personToLog = new Map();
-        for (let person of this.persons) {
-            personToLog.set(person, new PersonLog({ date: this.initialDate, value: genericInfectionRate(this.initialDate) }, person.externalActivity));
+    constructor(persons){
+        /**@type {Map<Person,Date>} */
+        this.persons=new Map();
+        for(let person in persons){
+            this.persons.set(person,none);
         }
-        for (let contact of this.contacts) {
-            const logA = personToLog.get(contact.a);
-            const logB = personToLog.get(contact.b);
-            const probA = logA.getInfectionProbability(contact.date);
-            const probB = logB.getInfectionProbability(contact.date);
-
-
-            const acuteProbA = Virus.getAcuteInfectionProbability(logA, contact.date);
-            const acuteProbB = Virus.getAcuteInfectionProbability(logB, contact.date);
-            logA.datapoints.push({
-                date: contact.date,
-                value: 1 - (1 - probA) * (1 - acuteProbB * contact.intensity)
-            });
-            logB.datapoints.push({
-                date: contact.date,
-                value: 1 - (1 - probB) * (1 - acuteProbA * contact.intensity)
-            });
-        }
-        return personToLog;
+    }
+    setInfectionDate(person, date){
+        this.persons.set(person,date);
     }
 }
