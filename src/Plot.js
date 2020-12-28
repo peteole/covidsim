@@ -9,7 +9,7 @@ import { Virus } from "./Virus.js";
  * @property {number} value - Probability of being infected
  */
 
-const genericInfectionRate = (date = new Date()) => 0.01;
+const genericInfectionRate = (date = new Date()) => 0.1;
 
 export class PersonLog {
     /**
@@ -36,7 +36,7 @@ export class PersonLog {
         let probability = datapoint.value;
         //compute offset due to untracked contacts
         for (let day = new Date(datapoint.date); day.getTime() < date.getTime(); day.setTime(day.getTime() + algorithmicConstants.deltaT * 1000 * 60 * 60 * 24)) {
-            const dayInfo = this.untracked(date);
+            const dayInfo = this.untracked(day);
             probability = 1 - (1 - probability) * Math.pow(1 - genericInfectionRate(date) * dayInfo.contactIntensity, dayInfo.contactDensity * algorithmicConstants.deltaT);
         }
         return probability;

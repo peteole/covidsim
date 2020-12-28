@@ -17,6 +17,6 @@ export class Virus {
     }
 }
 /** days after infection when you start being infectious */
-Virus.startOfInfectiosness = 2;
+Virus.startOfInfectiosness = 0;
 /** days after infection when you stop being infectious */
-Virus.endOfInfectiosness = 10;
+Virus.endOfInfectiosness = 100;
