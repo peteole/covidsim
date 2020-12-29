@@ -25,3 +25,7 @@ export class Virus {
 Virus.startOfInfectiosness = 2;
 /** days after infection when you stop being infectious */
 Virus.endOfInfectiosness = 10;
+/**days after first symptoms occur */
+Virus.incubationTime=5.5;
+/**probability of not having any symptoms with the virus */
+Virus.noSymptomProbability=0.55;
