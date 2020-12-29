@@ -2,6 +2,7 @@ import { Person } from "./Person.js";
 import { Contact } from "./Contact.js";
 import { Virus } from "./Virus.js";
 import { Observation } from "./Test.js";
+import { algorithmicConstants } from "./constants.js";
 
 /**
  * Simulation of an infection. Provides the functionality to simulate the plot many times to approximate probabilities at given test results
@@ -39,9 +40,7 @@ export class Simulation {
 
         this.personToInitialInfectionDate.set(toAdd, () => {
             if (Math.random() < 0.01) {
-                let toReturn = new Date(this.initialDate);
-                toReturn.setDate(toReturn.getDate() - Math.random() * 100);//random day in the last 100 days
-                return toReturn;
+                return new Date(this.initialDate.getTime() - Math.random() * 100 * algorithmicConstants.dayToMS);//random day in the last 100 days
             }
             return null;
         });
@@ -61,15 +60,40 @@ export class Simulation {
         this.addPerson(toAdd.b);
     }
     simulateOnce() {
+        const lastDateToSimulate = this.contacts[this.contacts.length - 1].date;
         /**
          * @type {Map<Person,Date>}
          */
         const result = new Map();
+        /**@type {(import("./Person.js").UntrackedContact|Contact)[]} */
+        const events = new Array(...this.contacts);
+        /**@type {(contact:import("./Person.js").UntrackedContact)=>void} */
+        const addUntrackedContact = (constact) => {
+            const date = constact.date;
+            for (let i in events) {
+                if (events[i].date > date) {
+                    events.splice(i, 0, constact);
+                    return;
+                }
+            }
+            events.push(constact);
+        };
         for (let person of this.persons) {
             const initialDate = this.personToInitialInfectionDate.get(person)();
             result.set(person, initialDate);
+            for (let contact = person.externalActivity(this.initialDate, person); contact.date < lastDateToSimulate; contact = person.externalActivity(contact.date, person)) {
+                if (contact.acuteInfected)
+                    addUntrackedContact(contact);
+            }
         }
-        for (let contact of this.contacts) {
+        for (let contact of events) {
+            if (contact.person) {
+                //contact is untracked. This is only triggered if the other person is infected
+                if (!result.get(contact.person) && Math.random() < contact.intensity) {
+                    result.set(contact.person, contact.date);
+                }
+            }
+            //contact is tracked
             const aDate = result.get(contact.a);
             const bDate = result.get(contact.b);
             // if both or none is infected nothing happens
@@ -99,6 +123,10 @@ export class Simulation {
             result: result
         };
     }
+    /**
+     * 
+     * @param {number} runs 
+     */
     simulate(runs) {
         /**@type {{result:Map<Person,Date>, probability:number}[]} */
         const results = [];
@@ -108,20 +136,46 @@ export class Simulation {
             results.push(result);
             probabilitySum += result.probability;
         }
+        /**@type {Map<Person,number>} */
         const totalInfectionProbability = new Map();
         for (let person of this.persons) {
             totalInfectionProbability.set(person, 0);
         }
+        /**@type {Map<Person,{date:Date,p:number, pAcc:number?}[]>} */
+        const infectionDates = new Map();
+        for (let person of this.persons)
+            infectionDates.set(person, []);
         for (let result of results) {
             result.probability /= probabilitySum;
 
             for (let person of this.persons) {
                 if (result.result.get(person))
-                    totalInfectionProbability.set(person, totalInfectionProbability.get(person)+result.probability);
+                    totalInfectionProbability.set(person, totalInfectionProbability.get(person) + result.probability);
+                infectionDates.get(person).push({ date: result.result.get(person), p: result.probability });
             }
         }
-        return {
-            totalInfectionProbability:totalInfectionProbability
+        for (let person of this.persons) {
+            const infectionDatesPerson = infectionDates.get(person);
+            infectionDatesPerson.sort((a, b) => {
+                if (!a.date && !b.date)
+                    return 0;
+                if (!a.date)
+                    return 1;
+                if (!b.date)
+                    return -1;
+                return a.date.getTime() - b.date.getTime();
+            });
+            let accumulatedProb = 0;
+            for (let date of infectionDatesPerson) {
+                accumulatedProb += date.p;
+                date.pAcc = accumulatedProb;
+            }
         }
+
+        return {
+            initialDate: this.initialDate,
+            totalInfectionProbability: totalInfectionProbability,
+            infectionTimeline: infectionDates
+        };
     }
 }
