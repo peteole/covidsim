@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/peteole/covidsim#readme",
   "dependencies": {
+    "dygraphs": "^2.1.0",
     "nodeplotlib": "^0.6.5"
   }
 }
