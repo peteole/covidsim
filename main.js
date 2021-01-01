@@ -1,9 +1,9 @@
 import { Person } from "./src/Person.js";
 import { Contact } from "./src/Contact.js";
-import { Plot, PersonLog } from "./src/Plot.js";
+import { Plot, PersonLog } from "./src/logic/Plot.js";
 import {visualize} from "./src/graphics.js";
-import { Simulation } from "./src/Simulation.js";
-import { SymptomLog, Test } from "./src/Test.js";
+import { Simulation } from "./src/logic/Simulation.js";
+import { SymptomLog, Test } from "./src/logic/Test.js";
 let a = new Person("A")//,(date)=>({contactDensity:date.getTime()<new Date("2020-11-1").getTime()?1:0,contactIntensity:1}));
 let b = new Person("B")//,(date)=>({contactDensity:0,contactIntensity:0}));
 let c = new Person("C");

@@ -1,7 +1,7 @@
 import pkg from 'nodeplotlib';
 const { plot } = pkg;
-import { algorithmicConstants } from "./constants.js";
-import { Simulation } from "./Simulation.js";
+import { algorithmicConstants } from "./logic/constants.js";
+import { Simulation } from "./logic/Simulation.js";
 import {Person}from "./Person.js";
 /**
  * 

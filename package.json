@@ -22,6 +22,14 @@
   "homepage": "https://github.com/peteole/covidsim#readme",
   "dependencies": {
     "dygraphs": "^2.1.0",
+    "lit-element": "^2.4.0",
     "nodeplotlib": "^0.6.5"
+  },
+  "devDependencies": {
+    "@types/dygraphs": "^1.1.12",
+    "ts-loader": "^8.0.13",
+    "typescript": "^4.1.3",
+    "webpack": "^5.11.1",
+    "webpack-cli": "^4.3.0"
   }
 }
