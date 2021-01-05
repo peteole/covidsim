@@ -66,7 +66,7 @@ export class Simulation {
         this.contacts.sort((a, b) => a.date.getTime() - b.date.getTime());
         this.lastDate = this.contacts[this.contacts.length - 1].date;
         if (this.initialDate > this.contacts[0]);
-        this.initialDate = this.contacts[0];
+        this.initialDate = this.contacts[0].date;
     }
     simulateOnce() {
         this.refreshContacts();
