@@ -3,8 +3,22 @@ import { Contact } from "../../logic/Contact"
 import { Simulation } from "../../logic/Simulation";
 @customElement("event-editor")
 export class EventEditor extends LitElement {
+    static get styles(){
+        return css`
+        :host{
+            position:fixed;
+            z-index:100;
+            left:25%;
+            top:25%;
+            height:50%;
+            width:50%;
+            background-color:grey;
+        }
+        `
+    }
     contact: Contact;
     simulation: Simulation;
+    onfinish:()=>void=()=>{};
 
     constructor(simulation: Simulation, contact: Contact = new Contact(null, null, { date: new Date(), intensity: 0 })) {
         super();
@@ -12,26 +26,29 @@ export class EventEditor extends LitElement {
         this.contact = contact;
     }
     render() {
+        const persons=new Array(...this.simulation.persons.keys());
         return html`
         <p>Person 1:
             <select id="person1select" @change=${this.person1change}>
                 <option value="">None</option>
-                ${new Array(...this.simulation.persons.keys()).map((person)=>{
+                ${persons.map((person)=>{
                     return html`
-                    <option value=${person.name}>${person.name}</option>
+                    <option value=${person.name} ?selected=${this.contact.a&&person==this.contact.a}>${person.name}</option>
                     `})}
             </select>
         </p>
-        <p>Person 1:
+        <p>Person 2:
             <select id="person2select" @change=${this.person2change}>
                 <option value="">None</option>
-                ${new Array(...this.simulation.persons.keys()).map((person)=>{
+                ${persons.map((person)=>{
                     return html`
-                    <option value=${person.name}>${person.name}</option>
+                    <option value=${person.name} ?selected=${this.contact.b&&person==this.contact.b}>${person.name}</option>
                     `})}
             </select>
         </p>
-        <p>Intensity: <input type="number" .value=${this.contact.intensity}></p>
+        <p>Intensity: <input id="in" type="number" .value=${String(this.contact.intensity)} @change=${()=>this.contact.intensity=Number.parseFloat((<HTMLInputElement>this.shadowRoot.getElementById("in")).value)}></p>
+        <p>Date of contact: <input id="date" type="date" .valueAsDate=${this.contact.date} @change=${()=>this.contact.date=new Date((<HTMLInputElement>this.shadowRoot.getElementById("date")).value)}></p>
+        <button @click=${this.close}>close</button>
         `
     }
     person1change(event:Event){
@@ -52,5 +69,13 @@ export class EventEditor extends LitElement {
                 this.contact.b=person;
             }
         }
+    }
+    close(event:Event){
+        if(!this.contact.a||!this.contact.b){
+            alert("please specify the persons having contact!");
+            return;
+        }
+        this.onfinish();
+        this.remove();
     }
 }

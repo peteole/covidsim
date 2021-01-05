@@ -1,6 +1,13 @@
 import { css, LitElement, property } from "lit-element";
 
 export abstract class TimelineElement extends LitElement {
+    static get styles(){
+        return css`
+            :host{
+                width:100%;
+            }
+        `
+    }
     @property({
         attribute: true,
         type: Number

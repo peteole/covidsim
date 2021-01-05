@@ -16,6 +16,7 @@ export class Simulation {
     constructor(initialDate = new Date(), observations = []) {
         this.observations = observations;
         this.initialDate = initialDate;
+        this.lastDate=initialDate;
         /**@type {Set<Person>}*/
         this.persons = new Set();
         /** @type {Contact[]} */
@@ -58,6 +59,8 @@ export class Simulation {
         this.contacts.push(toAdd);
         this.addPerson(toAdd.a);
         this.addPerson(toAdd.b);
+        if(this.lastDate<toAdd.date)
+            this.lastDate=toAdd.date;
     }
     simulateOnce() {
         const lastDateToSimulate = this.contacts[this.contacts.length - 1].date;
@@ -177,5 +180,9 @@ export class Simulation {
             totalInfectionProbability: totalInfectionProbability,
             infectionTimeline: infectionDates
         };
+    }
+    /**returns the persons as array to be able to use Array.map etc */
+    get personArray() {
+        return new Array(...this.persons);
     }
 }
