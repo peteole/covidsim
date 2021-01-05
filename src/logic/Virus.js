@@ -1,4 +1,4 @@
-import { PersonLog } from "./logic/Plot.js";
+import { PersonLog } from "./Plot.js";
 
 
 export class Virus {

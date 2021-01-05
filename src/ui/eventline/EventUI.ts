@@ -1,6 +1,17 @@
-import { html, LitElement, property } from "lit-element";
+import { css, customElement, html, LitElement, property } from "lit-element";
 import { Contact } from "../../logic/Contact"
+@customElement("event-ui")
 export class EventUI extends LitElement {
+    static get styles() {
+        return css`
+            :host{
+                position:absolute;
+                width:100px;
+                height:70px;
+                background-color:grey;
+            }
+        `
+    }
     event: Contact;
     constructor(event: Contact) {
         super();

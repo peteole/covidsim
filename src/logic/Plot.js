@@ -1,7 +1,5 @@
-import { Person } from "./Person.js";
-import { Contact } from "./Contact.js";
+import { Person } from "./Person";
 import { algorithmicConstants } from "./constants.js";
-import { Virus } from "../Virus.js";
 
 /**
  * @typedef {Object} InfectionProbability - Datapoint for being infected at a given time

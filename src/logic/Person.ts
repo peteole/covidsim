@@ -1,8 +1,9 @@
-import { algorithmicConstants } from "./logic/constants.js";
+import { algorithmicConstants } from "./constants";
 
 /**
  * @typedef {(date:Date)=>{contactDensity:number,contactIntensity:number}} untrackedActivity
  */
+
 /**
  * @typedef {Object} UntrackedContact
  * @property {Date} date -date at which the contact takes place
@@ -12,11 +13,12 @@ import { algorithmicConstants } from "./logic/constants.js";
  * @property {number} everInfected -whether the other person was infected at any point in time
  * @typedef {(date:Date,person:Person)=>UntrackedContact} untrackedContactGenerator -generates next untracked contact starting at a given date
  */
+
 /**@type {untrackedContactGenerator} */
-const defaultContactGenerator = (date, person) => ({
+const defaultContactGenerator = (date: Date, person: Person) => ({
     date: new Date(date.getTime() + 2 * person.untrackedFrequency * Math.random() * algorithmicConstants.dayToMS),
-    acuteInfected: 0.001>Math.random(),
-    everInfected: 0.01>Math.random(),
+    acuteInfected: 0.001 > Math.random(),
+    everInfected: 0.01 > Math.random(),
     intensity: 2 * Math.random() * person.untrackedIntensity,
     person: person
 });
@@ -24,11 +26,15 @@ const defaultContactGenerator = (date, person) => ({
  * Class representing persons in the real world.
  */
 export class Person {
+    name: string;
+    untrackedFrequency: number;
+    untrackedIntensity: number;
+    externalActivity: any;
     /**
      * @param {string} name
      * @param {untrackedContactGenerator} externalActivity - generates next contact of person starting at given date
      */
-    constructor(name, untrackedFrequency = 1, untrackedIntensity = 0.1, externalActivity = defaultContactGenerator) {
+    constructor(name: string, untrackedFrequency = 1, untrackedIntensity = 0.1, externalActivity = defaultContactGenerator) {
         this.externalActivity = externalActivity;
         this.name = name;
         this.untrackedFrequency = untrackedFrequency;

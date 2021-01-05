@@ -1,6 +1,6 @@
-import { Person } from "./Person.js";
+import { Person } from "./Person";
 import { Contact } from "./Contact.js";
-import { Virus } from "../Virus.js";
+import { Virus } from "./Virus.js";
 import { Observation } from "./Test.js";
 import { algorithmicConstants } from "./constants.js";
 
