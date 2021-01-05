@@ -40,6 +40,11 @@ export class Eventline extends TimelineElement {
                 height:200px;
                 overflow-x:auto;
             }
+            #event-adder{
+                position:absolute;
+                left:40%;
+                width:20%
+            }
         `
     }
     private events: Contact[] = [];
@@ -71,8 +76,8 @@ export class Eventline extends TimelineElement {
         const maxDateMS = Math.max(...this.events.map((ev) => ev.date.getTime()));
         const maxX = (maxDateMS - this.simulation.initialDate.getTime()) * this.scale / 1000 /24/ 60 / 60;
         return html`
+            <button id="event-adder" @click=${this.addContact}>+</button>
             <div id="window">
-                <div id="event-adder" @click=${this.addContact}>Add event</div>
                 <div id="container" style="width:${ maxX}px">
                     ${this.eventUIs.map((ui) => {
                         ui.style.left = (ui.event.date.getTime() - this.simulation.initialDate.getTime()) / (1000 * 60 *24* 60) * this.scale +

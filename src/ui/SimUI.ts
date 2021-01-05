@@ -2,7 +2,7 @@ import { Person } from "../logic/Person";
 import { Simulation } from "../logic/Simulation";
 import { TimelineElement } from "./TimelineElement";
 
-import { customElement, html, LitElement } from "lit-element";
+import { css, customElement, html, LitElement } from "lit-element";
 import { Eventline } from "./eventline/Eventline";
 import { Contact } from "../logic/Contact";
 import { Settings } from "./settings/Settings";
@@ -10,6 +10,14 @@ import { InfectionGraph } from "./graph/InfectionGraph";
 
 @customElement("sim-ui")
 export class SimUI extends LitElement {
+    static get styles() {
+        return css`
+            footer{
+                text-align:center;
+            }
+        `
+    }
+
     /**number of pixels per day in x direction */
     scale: number = 100;
     simulation: Simulation;
@@ -27,7 +35,7 @@ export class SimUI extends LitElement {
     render() {
         return html`
             ${this.timelineElements}
-            <button @click=${()=> document.body.appendChild(new Settings(this))}>Settings</button>
+            <footer><button @click=${()=> document.body.appendChild(new Settings(this))}>Settings</button></footer>
         `;
     }
     setScrollingDate(newDate: Date, toOmit: TimelineElement) {

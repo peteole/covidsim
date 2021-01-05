@@ -16,7 +16,7 @@ export class Simulation {
     constructor(initialDate = new Date(), observations = []) {
         this.observations = observations;
         this.initialDate = initialDate;
-        this.lastDate=initialDate;
+        this.lastDate = initialDate;
         /**@type {Set<Person>}*/
         this.persons = new Set();
         /** @type {Contact[]} */
@@ -59,10 +59,17 @@ export class Simulation {
         this.contacts.push(toAdd);
         this.addPerson(toAdd.a);
         this.addPerson(toAdd.b);
-        if(this.lastDate<toAdd.date)
-            this.lastDate=toAdd.date;
+        if (this.lastDate < toAdd.date)
+            this.lastDate = toAdd.date;
+    }
+    refreshContacts() {
+        this.contacts.sort((a, b) => a.date.getTime() - b.date.getTime());
+        this.lastDate = this.contacts[this.contacts.length - 1].date;
+        if (this.initialDate > this.contacts[0]);
+        this.initialDate = this.contacts[0];
     }
     simulateOnce() {
+        this.refreshContacts();
         const lastDateToSimulate = this.contacts[this.contacts.length - 1].date;
         /**
          * @type {Map<Person,Date>}
