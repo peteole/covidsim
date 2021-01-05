@@ -27,6 +27,10 @@ export class EventEditor extends LitElement {
     }
     render() {
         const persons=new Array(...this.simulation.persons.keys());
+        if(!this.contact.a)
+            this.contact.a=persons[0];
+        if(!this.contact.b)
+            this.contact.b=persons[1];
         return html`
         <p>Person 1:
             <select id="person1select" @change=${this.person1change}>

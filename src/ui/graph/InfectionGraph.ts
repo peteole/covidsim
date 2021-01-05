@@ -82,21 +82,13 @@ export class InfectionGraph extends TimelineElement {
     }
     simulate(ev: Event) {
         const result = this.simulation.simulate(100000);
-        const resultPersons = result.totalInfectionProbability.keys();
-        let csv = "date,";
-        for (let person of resultPersons)
-            csv += person.name + ","
         const list = InfectionGraph.toArray(result, 0.5, this.simulation.lastDate.getTime());
-        csv += "\n";
-        for (let datapoint of list) {
-            csv += datapoint.date.toDateString() + ",";
-            for (let personvalue of datapoint.values) {
-                csv += personvalue + ","
-            }
-            csv += "\n";
-        }
         const graphDiv = this.shadowRoot.getElementById("dg");
+        const resultPersons = new Array(...result.totalInfectionProbability.keys());
         graphDiv.style.width = ((this.simulation.lastDate.getTime() - this.simulation.initialDate.getTime()) * this.scale / 1000 / 60 / 60 / 24) + "px";
-        const graph = new Dygraph(graphDiv, csv);
+        const graph = new Dygraph(graphDiv, list.map((val) => [val.date, ...val.values]), {
+            labels: ["date", ...resultPersons.map(person => person.name)],
+            panEdgeFraction:0
+        });
     }
 }
