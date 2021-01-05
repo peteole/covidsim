@@ -10,27 +10,41 @@ import { Person } from "../../logic/Person";
 export class InfectionGraph extends TimelineElement {
     static get styles() {
         return css`
-        #dg{
+        #window{
             width:100%;
+            overflow-x:auto;
         }
         `
     }
     onScaleChange(newScale: number): void {
-        throw new Error("Method not implemented.");
+        this.requestUpdate();
+        this.simulate(null);
     }
     onDateChange(newDateBeginning: Date): void {
-        throw new Error("Method not implemented.");
+        const newScrollingPosition = (newDateBeginning.getTime() - this.simulation.initialDate.getTime()) * this.scale / 1000 / 60 / 60 / 24;
+        this.window.scrollTo(newScrollingPosition, 0);
     }
     simui: SimUI;
     simulation: Simulation;
+    window: HTMLDivElement | null;
     constructor(simui: SimUI) {
         super();
         this.simui = simui;
         this.simulation = simui.simulation;
     }
+    updated() {
+        this.window = <HTMLDivElement>this.shadowRoot.getElementById("window");
+        this.window.onscroll = (ev) => {
+            requestAnimationFrame((time) => {
+                this.simui.setScrollingDate(new Date(this.window.scrollLeft / this.scale * 1000 * 60 * 60 * 24 + this.simulation.initialDate.getTime()), this)
+            })
+        }
+    }
     render() {
         return html`
-        <div id="dg"></div>
+        <div id="window">
+            <div id="dg"></div>
+        </div>
         <button @click=${this.simulate}>simulate</button>
         `
     }
@@ -57,7 +71,7 @@ export class InfectionGraph extends TimelineElement {
                 const person = personArray[i];
                 const personValues = result.infectionTimeline.get(person);
                 let index = indices[i];
-                while (index < personValues.length && personValues[index].date < date)
+                while (index + 1 < personValues.length && personValues[index].date < date)
                     index++;
                 indices[i] = index;
                 newValues[i] = personValues[index].pAcc;
@@ -81,6 +95,8 @@ export class InfectionGraph extends TimelineElement {
             }
             csv += "\n";
         }
-        const graph = new Dygraph(this.shadowRoot.getElementById("dg"), csv);
+        const graphDiv = this.shadowRoot.getElementById("dg");
+        graphDiv.style.width = ((this.simulation.lastDate.getTime() - this.simulation.initialDate.getTime()) * this.scale / 1000 / 60 / 60 / 24) + "px";
+        const graph = new Dygraph(graphDiv, csv);
     }
 }

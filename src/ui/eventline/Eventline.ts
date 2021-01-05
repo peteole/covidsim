@@ -6,13 +6,16 @@ import { Simulation } from "../../logic/Simulation";
 import { PersonEditor } from "../settings/PersonEditor";
 import { Person } from "../../logic/Person";
 import { EventEditor } from "./EventEditor";
+import { SimUI } from "../SimUI";
 
 @customElement("event-line")
 export class Eventline extends TimelineElement {
     simulation: Simulation;
-    constructor(simulation: Simulation) {
+    simui:SimUI;
+    constructor(simui: SimUI) {
         super();
-        this.simulation = simulation;
+        this.simulation = simui.simulation;
+        this.simui=simui;
         for(let element of this.simulation.contacts){
             this.addEvent(element);
         }
@@ -21,6 +24,8 @@ export class Eventline extends TimelineElement {
 
     }
     onDateChange(newDateBeginning: Date): void {
+        const newScrollingPosition = (newDateBeginning.getTime() - this.simulation.initialDate.getTime()) * this.scale / 1000 / 60 / 60 / 24;
+        this.window.scrollTo(newScrollingPosition, 0);
     }
     static get styles() {
         return css`
@@ -39,6 +44,16 @@ export class Eventline extends TimelineElement {
     }
     private events: Contact[] = [];
     private eventUIs: EventUI[] = [];
+    private window:HTMLDivElement|null;
+
+    updated(){
+        this.window=<HTMLDivElement>this.shadowRoot.getElementById("window");
+        this.window.onscroll = (ev) => {
+            requestAnimationFrame((time) => {
+                this.simui.setScrollingDate(new Date(this.window.scrollLeft / this.scale * 1000 * 60 * 60 * 24 + this.simulation.initialDate.getTime()),this)
+            })
+        }
+    }
     addEvent(event: Contact) {
         this.events.push(event);
         this.eventUIs.push(new EventUI(event,this));

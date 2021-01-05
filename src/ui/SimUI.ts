@@ -19,7 +19,7 @@ export class SimUI extends LitElement {
     constructor(initialDate: Date) {
         super();
         this.simulation = new Simulation(initialDate);
-        this.eventline = new Eventline(this.simulation);
+        this.eventline = new Eventline(this);
         this.timelineElements.push(this.eventline);
         this.graph = new InfectionGraph(this);
         this.timelineElements.push(this.graph);
@@ -27,7 +27,13 @@ export class SimUI extends LitElement {
     render() {
         return html`
             ${this.timelineElements}
-            <button @click=${() => document.body.appendChild(new Settings(this))}>Settings</button>
+            <button @click=${()=> document.body.appendChild(new Settings(this))}>Settings</button>
         `;
+    }
+    setScrollingDate(newDate: Date, toOmit: TimelineElement) {
+        for (let el of this.timelineElements) {
+            if (toOmit != el)
+                el.onDateChange(newDate);
+        }
     }
 }
