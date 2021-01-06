@@ -12,6 +12,7 @@ export class PersonEditor extends LitElement {
                 left:30%;
                 top:30%;
                 position:fixed;
+                border:1px;
             }
         `
     }
@@ -33,20 +34,20 @@ export class PersonEditor extends LitElement {
     render() {
         return html`
         <h2>Edit person</h2>
-        <p>Name: <input id="nameinput" .value=${this.person.name} @change=${() => this.person.name = (<HTMLInputElement>
+        <p>Name: <input id="nameinput" .value=${this.person.name} @change=${()=> this.person.name = (<HTMLInputElement>
                 this.shadowRoot.getElementById("nameinput")).value} @keyup=${(ev: KeyboardEvent) => {
-                    if (ev.key === "Enter")
-                        this.close()
+                if (ev.key === "Enter")
+                this.close()
                 }}></p>
         
         <p>Estimated number of untracked contacts per day: <input id="untrin" type="number"
-                .value=${String(this.person.untrackedFrequency)} @change=${()=> this.person.untrackedFrequency =
-            Number.parseFloat((<HTMLInputElement>
-                    this.shadowRoot.getElementById("untrin")).value)}></p>
+                .value=${String(this.person.untrackedFrequency)} @change=${() => this.person.untrackedFrequency =
+                Number.parseFloat((<HTMLInputElement>
+                this.shadowRoot.getElementById("untrin")).value)}></p>
         <p>Number of untracked contacts per day: <input id="untrintin" type="number"
-                .value=${String(this.person.untrackedIntensity)} @change=${()=> this.person.untrackedIntensity =
-            Number.parseFloat((<HTMLInputElement>
-                        this.shadowRoot.getElementById("untrintin")).value)}></p>
+                .value=${String(this.person.untrackedIntensity)} @change=${() => this.person.untrackedIntensity =
+                Number.parseFloat((<HTMLInputElement>
+            this.shadowRoot.getElementById("untrintin")).value)}></p>
         <button @click=${this.delete}>delete person</button>
         <button @click=${this.close}>close</button>
         `;

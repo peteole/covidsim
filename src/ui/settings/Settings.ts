@@ -16,6 +16,9 @@ export class Settings extends LitElement {
                 left:10%;
                 top:10%;
             }
+            .personpreview{
+                border:1px;
+            }
         `
     }
     simulation: Simulation;
@@ -31,14 +34,16 @@ export class Settings extends LitElement {
             <h2>Settings</h2>
             <hr>
             <h3>Persons</h3>
-            ${this.simulation.personArray.map((person) => html`<p @click=${()=> this.editPerson(person)}>${person.name}</p>`)}
+            ${this.simulation.personArray.map((person) => html`<p class="personpreview" @click=${() =>
+                this.editPerson(person)}>${person.name} (${person.untrackedFrequency} untracked contacts with
+                ${person.untrackedIntensity} per day)</p>`)}
             <button @click=${this.addPerson}>add Person</button>
             <p>Note that all persons must have different names!</p>
             <hr>
-            <p>Number of simulations to run: <input id="runsin" type="number" .value=${String(this.simui.simRuns)} @change=${() =>
+            <p>Number of simulations to run: <input id="runsin" type="number" .value=${String(this.simui.simRuns)} @change=${()=>
                 this.simui.simRuns = Number.parseFloat((<HTMLInputElement>
-                            this.shadowRoot.getElementById("runsin")).value)}></p>
-            <button @click=${()=> { this.simui.eventline.deepUpdate(); this.remove() }}>close</button>
+            this.shadowRoot.getElementById("runsin")).value)}></p>
+            <button @click=${() => { this.simui.eventline.deepUpdate(); this.remove() }}>close</button>
         `
     }
     editPerson(person: Person) {
