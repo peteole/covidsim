@@ -27,6 +27,7 @@ export class InfectionGraph extends TimelineElement {
         //const newScrollingPosition = (newDateBeginning.getTime() - this.simulation.initialDate.getTime()) * this.scale / 1000 / 60 / 60 / 24;
         //this.window.scrollTo(newScrollingPosition, 0);
         if (this.graph) {
+            this.triggeredOutside = true;
             const endDate = new Date(newDateBeginning.getTime() + this.window.clientWidth / this.scale * 1000 * 60 * 60 * 24);
             this.graph.updateOptions({
                 dateWindow: [newDateBeginning.getTime(), endDate.getTime()]
@@ -37,6 +38,7 @@ export class InfectionGraph extends TimelineElement {
     simulation: Simulation;
     window: HTMLDivElement | null;
     graph: Dygraph | null = null;
+    triggeredOutside: boolean = false;
     constructor(simui: SimUI) {
         super();
         this.simui = simui;
@@ -97,6 +99,10 @@ export class InfectionGraph extends TimelineElement {
             underlayCallback: (ctx, area, g) => {
                 const range = g.xAxisRange();
                 const newInitialDate = new Date(range[0]);
+                if(this.triggeredOutside){
+                    this.triggeredOutside=false;
+                    return;
+                }
                 window.requestAnimationFrame(() => {
                     this.simui.setScrollingDate(newInitialDate, this);
                 });
