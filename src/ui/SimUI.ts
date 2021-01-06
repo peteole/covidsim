@@ -44,4 +44,13 @@ export class SimUI extends LitElement {
                 el.onDateChange(newDate);
         }
     }
+    setScale(newScale: number, newFirstDate: Date, toOmit: TimelineElement) {
+
+        for (let el of this.timelineElements) {
+            el.scale = newScale;
+            if (toOmit != el)
+                el.onScaleChange(newScale);
+        }
+        this.setScrollingDate(newFirstDate, toOmit);
+    }
 }

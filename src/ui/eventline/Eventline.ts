@@ -12,6 +12,7 @@ import { SimUI } from "../SimUI";
 export class Eventline extends TimelineElement {
     simulation: Simulation;
     simui:SimUI;
+    scrolltoTriggered:boolean=false;
     constructor(simui: SimUI) {
         super();
         this.simulation = simui.simulation;
@@ -21,11 +22,12 @@ export class Eventline extends TimelineElement {
         }
     }
     onScaleChange(newScale: number): void {
-
+        this.deepUpdate();
     }
     onDateChange(newDateBeginning: Date): void {
         const newScrollingPosition = (newDateBeginning.getTime() - this.simulation.initialDate.getTime()) * this.scale / 1000 / 60 / 60 / 24;
         this.window.scrollTo(newScrollingPosition, 0);
+        this.scrolltoTriggered=true;
     }
     static get styles() {
         return css`
@@ -54,11 +56,16 @@ export class Eventline extends TimelineElement {
     updated(){
         this.window=<HTMLDivElement>this.shadowRoot.getElementById("window");
         this.window.onscroll = (ev) => {
+            if(this.scrolltoTriggered){
+                this.scrolltoTriggered=false;
+                return;
+            }
             requestAnimationFrame((time) => {
                 this.simui.setScrollingDate(new Date(this.window.scrollLeft / this.scale * 1000 * 60 * 60 * 24 + this.simulation.initialDate.getTime()),this)
             })
         }
     }
+    /**add contact via api */
     addEvent(event: Contact) {
         this.events.push(event);
         this.eventUIs.push(new EventUI(event,this));
@@ -88,7 +95,8 @@ export class Eventline extends TimelineElement {
             </div>
         `
     }
-    addContact(event:Event){
+    /**add contact via ui */
+    addContact(){
         const newUI=new EventEditor(this.simulation);
         newUI.onfinish=()=>{
             this.addEvent(newUI.contact);

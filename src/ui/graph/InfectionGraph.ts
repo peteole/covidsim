@@ -14,19 +14,29 @@ export class InfectionGraph extends TimelineElement {
             width:100%;
             overflow-x:auto;
         }
+        #dg{
+            width:100%;
+        }
         `
     }
     onScaleChange(newScale: number): void {
         this.requestUpdate();
-        this.simulate(null);
+        //this.simulate(null);
     }
     onDateChange(newDateBeginning: Date): void {
-        const newScrollingPosition = (newDateBeginning.getTime() - this.simulation.initialDate.getTime()) * this.scale / 1000 / 60 / 60 / 24;
-        this.window.scrollTo(newScrollingPosition, 0);
+        //const newScrollingPosition = (newDateBeginning.getTime() - this.simulation.initialDate.getTime()) * this.scale / 1000 / 60 / 60 / 24;
+        //this.window.scrollTo(newScrollingPosition, 0);
+        if (this.graph) {
+            const endDate = new Date(newDateBeginning.getTime() + this.window.clientWidth / this.scale * 1000 * 60 * 60 * 24);
+            this.graph.updateOptions({
+                dateWindow: [newDateBeginning.getTime(), endDate.getTime()]
+            })
+        }
     }
     simui: SimUI;
     simulation: Simulation;
     window: HTMLDivElement | null;
+    graph: Dygraph | null = null;
     constructor(simui: SimUI) {
         super();
         this.simui = simui;
@@ -34,11 +44,6 @@ export class InfectionGraph extends TimelineElement {
     }
     updated() {
         this.window = <HTMLDivElement>this.shadowRoot.getElementById("window");
-        this.window.onscroll = (ev) => {
-            requestAnimationFrame((time) => {
-                this.simui.setScrollingDate(new Date(this.window.scrollLeft / this.scale * 1000 * 60 * 60 * 24 + this.simulation.initialDate.getTime()), this)
-            })
-        }
     }
     render() {
         return html`
@@ -82,13 +87,26 @@ export class InfectionGraph extends TimelineElement {
     }
     simulate(ev: Event) {
         const result = this.simulation.simulate(100000);
-        const list = InfectionGraph.toArray(result, 0.5, this.simulation.lastDate.getTime());
+        const list = InfectionGraph.toArray(result, 0.1, this.simulation.lastDate.getTime());
         const graphDiv = this.shadowRoot.getElementById("dg");
         const resultPersons = new Array(...result.totalInfectionProbability.keys());
-        graphDiv.style.width = ((this.simulation.lastDate.getTime() - this.simulation.initialDate.getTime()) * this.scale / 1000 / 60 / 60 / 24) + "px";
-        const graph = new Dygraph(graphDiv, list.map((val) => [val.date, ...val.values]), {
+        graphDiv.style.width = "100%";//((this.simulation.lastDate.getTime() - this.simulation.initialDate.getTime()) * this.scale / 1000 / 60 / 60 / 24) + "px";
+        this.graph = new Dygraph(graphDiv, list.map((val) => [val.date, ...val.values]), {
             labels: ["date", ...resultPersons.map(person => person.name)],
-            panEdgeFraction:0
+            panEdgeFraction: 0,
+            underlayCallback: (ctx, area, g) => {
+                const range = g.xAxisRange();
+                const newInitialDate = new Date(range[0]);
+                window.requestAnimationFrame(() => {
+                    this.simui.setScrollingDate(newInitialDate, this);
+                });
+            },
+            zoomCallback: (mindate, maxdate, yranges) => {
+                const dateRange = (maxdate - mindate) / 1000 / 60 / 60 / 24;
+                const newScale = this.window.clientWidth / dateRange;
+                this.simui.setScale(newScale, new Date(mindate), this);
+            }
         });
+        this.onDateChange(this.simulation.initialDate);
     }
 }
