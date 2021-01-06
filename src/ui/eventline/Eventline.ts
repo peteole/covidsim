@@ -39,10 +39,13 @@ export class Eventline extends TimelineElement {
             }
             :host{
                 overflow-x:auto;
+                flex-grow:1;
+                display:flex;
+                flex-direction:column;
             }
             #window{
                 width:100%;
-                height:200px;
+                flex-grow:1;
                 overflow-x:auto;
             }
             #event-buttons{
@@ -109,16 +112,30 @@ export class Eventline extends TimelineElement {
         this.requestUpdate();
     }
     render() {
-        const maxDateMS = Math.max(...this.events.map((ev) => ev.date.getTime()));
-        const maxX = (maxDateMS - this.simulation.initialDate.getTime()) * this.scale / 1000 /24/ 60 / 60;
+        this.events.sort((a,b)=>a.date.getTime()-b.date.getTime());
+        this.eventUIs.sort((a,b)=>a.event.date.getTime()-b.event.date.getTime());
+        let maxX=0;
+        if(this.events.length>0){
+            const maxDateMS = this.events[this.events.length-1].date.getTime();
+            maxX = (maxDateMS - this.simulation.initialDate.getTime()) * this.scale / 1000 /24/ 60 / 60;
+        }
+        const lastMountpoint={x:Number.NEGATIVE_INFINITY,y:0};
         return html`
             <p id="event-buttons"><button id="event-adder" @click=${this.addContact}>+contact</button> | <button id="test-adder" @click=${this.addTest}>+test</button>
             </p>
             <div id="window">
                 <div id="container" style="width:${ maxX}px">
                     ${this.eventUIs.map((ui) => {
-                        ui.style.left = (ui.event.date.getTime() - this.simulation.initialDate.getTime()) / (1000 * 60 *24* 60) * this.scale +
-                    "px";
+                        const newLeft = (ui.event.date.getTime() - this.simulation.initialDate.getTime()) / (1000 * 60 *24* 60) * this.scale;
+                        //prevent events from colliding visually
+                        ui.style.left=newLeft+"px";
+                        if(newLeft-lastMountpoint.x<120){
+                            lastMountpoint.y+=180;
+                        }else{
+                            lastMountpoint.y=0;
+                        }
+                        ui.style.top=lastMountpoint.y+"px";
+                        lastMountpoint.x=newLeft;
                         return ui;
                     })}
                 </div>

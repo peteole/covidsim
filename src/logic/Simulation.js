@@ -1,7 +1,7 @@
 import { Person } from "./Person";
 import { Contact } from "./Contact.js";
 import { Virus } from "./Virus.js";
-import { Observation } from "./Test.js";
+import { Observation } from "./Test";
 import { algorithmicConstants } from "./constants.js";
 
 /**

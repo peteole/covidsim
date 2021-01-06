@@ -78,7 +78,7 @@ export class InfectionGraph extends TimelineElement {
                 const person = personArray[i];
                 const personValues = result.infectionTimeline.get(person);
                 let index = indices[i];
-                while (index + 1 < personValues.length && personValues[index].date < date)
+                while (index + 1 < personValues.length && personValues[index] && personValues[index].date < date)
                     index++;
                 indices[i] = index;
                 newValues[i] = personValues[index].pAcc;
@@ -99,8 +99,8 @@ export class InfectionGraph extends TimelineElement {
             underlayCallback: (ctx, area, g) => {
                 const range = g.xAxisRange();
                 const newInitialDate = new Date(range[0]);
-                if(this.triggeredOutside){
-                    this.triggeredOutside=false;
+                if (this.triggeredOutside) {
+                    this.triggeredOutside = false;
                     return;
                 }
                 window.requestAnimationFrame(() => {

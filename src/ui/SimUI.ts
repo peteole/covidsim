@@ -15,6 +15,11 @@ export class SimUI extends LitElement {
             footer{
                 text-align:center;
             }
+            :host{
+                display:flex;
+                flex-direction:column;
+                height:100%;
+            }
         `
     }
 
@@ -37,7 +42,7 @@ export class SimUI extends LitElement {
         return html`
             ${this.timelineElements}
             <footer>
-                <p><button @click=${() => document.body.appendChild(new Settings(this))}>Settings</button></p>
+                <p><button @click=${()=> document.body.appendChild(new Settings(this))}>Settings</button></p>
                 <p>Source code: <a href="https://github.com/peteole/covidsim">https://github.com/peteole/covidsim</a></p>
             </footer>
         `;
