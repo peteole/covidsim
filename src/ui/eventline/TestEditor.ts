@@ -48,7 +48,7 @@ export class TestEditor extends LitElement {
         <p>Specificity: <input id="specin" type="number" .value=${String(this.test.specificity)} @change=${()=>this.test.specificity=Number.parseFloat((<HTMLInputElement>this.shadowRoot.getElementById("specin")).value)}></p>
         <p>Date of test: <input id="date" type="date" .valueAsDate=${this.test.date} @change=${()=>this.test.setDate(new Date((<HTMLInputElement>this.shadowRoot.getElementById("date")).value))}></p>
         <p>Positive?: <input id="posin" type="checkbox" .checked=${this.test.positive} @change=${()=>this.test.positive=((<HTMLInputElement>this.shadowRoot.getElementById("posin")).checked)}></p>
-        <button @click=${()=>{this.eventline.removeEvent(this.test)}}>remove</button>
+        <button @click=${()=>{this.eventline.removeEvent(this.test);this.close(null);}}>remove</button>
         <button @click=${this.close}>close</button>
         `
     }
