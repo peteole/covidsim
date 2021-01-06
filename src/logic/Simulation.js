@@ -62,16 +62,24 @@ export class Simulation {
         if (this.lastDate < toAdd.date)
             this.lastDate = toAdd.date;
     }
+    /**order contacts to avoid any errors */
     refreshContacts() {
         this.contacts.sort((a, b) => a.date.getTime() - b.date.getTime());
-        this.lastDate = this.contacts[this.contacts.length - 1].date;
+        if (this.contacts.length > 0) {
+            this.lastDate = this.contacts[this.contacts.length - 1].date;
+        }
+        for (let o of this.observations) {
+            if (o.date && o.date > this.lastDate) {
+                this.lastDate = o.date;
+            }
+        }
         if (this.initialDate > this.contacts[0]) {
             this.initialDate = this.contacts[0].date;
         }
     }
     simulateOnce() {
         this.refreshContacts();
-        const lastDateToSimulate = this.contacts[this.contacts.length - 1].date;
+        const lastDateToSimulate = this.lastDate;
         /**
          * @type {Map<Person,Date>}
          */

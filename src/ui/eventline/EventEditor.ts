@@ -1,6 +1,7 @@
 import { css, customElement, html, LitElement, property } from "lit-element";
 import { Contact } from "../../logic/Contact"
 import { Simulation } from "../../logic/Simulation";
+import { Eventline } from "./Eventline";
 @customElement("event-editor")
 export class EventEditor extends LitElement {
     static get styles(){
@@ -18,11 +19,13 @@ export class EventEditor extends LitElement {
     }
     contact: Contact;
     simulation: Simulation;
+    eventline:Eventline;
     onfinish:()=>void=()=>{};
 
-    constructor(simulation: Simulation, contact: Contact = new Contact(null, null, { date: new Date(), intensity: 0 })) {
+    constructor(eventline: Eventline, contact: Contact = new Contact(null, null, { date: new Date(), intensity: 0 })) {
         super();
-        this.simulation = simulation;
+        this.simulation = eventline.simulation;
+        this.eventline=eventline;
         this.contact = contact;
     }
     render() {
@@ -52,6 +55,7 @@ export class EventEditor extends LitElement {
         </p>
         <p>Intensity: <input id="in" type="number" .value=${String(this.contact.intensity)} @change=${()=>this.contact.intensity=Number.parseFloat((<HTMLInputElement>this.shadowRoot.getElementById("in")).value)}></p>
         <p>Date of contact: <input id="date" type="date" .valueAsDate=${this.contact.date} @change=${()=>this.contact.date=new Date((<HTMLInputElement>this.shadowRoot.getElementById("date")).value)}></p>
+        <button @click=${()=>{this.eventline.removeEvent(this.contact);this.close(null);}}>remove</button>
         <button @click=${this.close}>close</button>
         `
     }

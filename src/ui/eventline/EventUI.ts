@@ -10,8 +10,11 @@ export class EventUI extends LitElement {
             :host{
                 position:absolute;
                 width:100px;
-                height:70px;
+                height:120px;
                 background-color:grey;
+                text-align:center;
+                padding:3px;
+                border-radius:3px;
             }
         `
     }
@@ -31,7 +34,7 @@ export class EventUI extends LitElement {
         `
     }
     edit() {
-        const editor = new EventEditor(this.simulation, this.event);
+        const editor = new EventEditor(this.timeline, this.event);
         editor.onfinish = () => {
             this.requestUpdate();
             this.timeline.requestUpdate();

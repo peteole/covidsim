@@ -88,7 +88,7 @@ export class InfectionGraph extends TimelineElement {
         return list;
     }
     simulate(ev: Event) {
-        const result = this.simulation.simulate(100000);
+        const result = this.simulation.simulate(this.simui.simRuns);
         const list = InfectionGraph.toArray(result, 0.1, this.simulation.lastDate.getTime());
         const graphDiv = this.shadowRoot.getElementById("dg");
         const resultPersons = new Array(...result.totalInfectionProbability.keys());

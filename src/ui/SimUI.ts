@@ -24,18 +24,22 @@ export class SimUI extends LitElement {
     timelineElements: TimelineElement[] = [];
     eventline: Eventline;
     graph: InfectionGraph;
+    simRuns: number = 1000000;
     constructor(initialDate: Date) {
         super();
         this.simulation = new Simulation(initialDate);
-        this.eventline = new Eventline(this);
-        this.timelineElements.push(this.eventline);
         this.graph = new InfectionGraph(this);
         this.timelineElements.push(this.graph);
+        this.eventline = new Eventline(this);
+        this.timelineElements.push(this.eventline);
     }
     render() {
         return html`
             ${this.timelineElements}
-            <footer><button @click=${()=> document.body.appendChild(new Settings(this))}>Settings</button></footer>
+            <footer>
+                <p><button @click=${() => document.body.appendChild(new Settings(this))}>Settings</button></p>
+                <p>Source code: <a href="https://github.com/peteole/covidsim">https://github.com/peteole/covidsim</a></p>
+            </footer>
         `;
     }
     setScrollingDate(newDate: Date, toOmit: TimelineElement) {

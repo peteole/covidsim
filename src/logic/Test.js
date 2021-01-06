@@ -37,16 +37,19 @@ export class Test extends Observation {
      */
     constructor(person, date, positive, sensitivity = 0.95, specificity = 0.9, startObservability = 2, endObservability = 14) {
         super(person);
-        this.date = date;
-        if (this.date) {
-            this.relevantTimeStart = new Date(date);
-            this.relevantTimeStart.setDate(date.getDate() - endObservability);
-            this.relevantTimeEnd = new Date(date);
-            this.relevantTimeEnd.setDate(date.getDate() - startObservability);
-        }
+        this.setDate(date);
+        this.startObservability = startObservability;
+        this.endObservability = endObservability;
         this.positive = positive;
         this.sensitivity = sensitivity;
         this.specificity = specificity;
+    }
+    setDate(date = this.date) {
+        this.date = date;
+        this.relevantTimeStart = new Date(date);
+        this.relevantTimeStart.setDate(date.getDate() - this.endObservability);
+        this.relevantTimeEnd = new Date(date);
+        this.relevantTimeEnd.setDate(date.getDate() - this.startObservability);
     }
     /**
      * 
