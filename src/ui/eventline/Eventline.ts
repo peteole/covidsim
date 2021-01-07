@@ -151,6 +151,7 @@ export class Eventline extends TimelineElement {
         const newUI=new EventEditor(this);
         newUI.onfinish=()=>{
             this.addEvent(newUI.contact);
+            this.simui.graph.simulate(null);
         }
         this.shadowRoot.appendChild(newUI);
     }
@@ -163,6 +164,7 @@ export class Eventline extends TimelineElement {
         const newUI=new TestEditor(this);
         newUI.onfinish=()=>{
             this.addEvent(newUI.test);
+            this.simui.graph.simulate(null);
         }
         this.shadowRoot.appendChild(newUI);
     }

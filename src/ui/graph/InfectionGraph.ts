@@ -25,6 +25,7 @@ export function isSimulationResult(res: any): res is {
 }
 @customElement("infection-graph")
 export class InfectionGraph extends TimelineElement {
+    worker: Worker|null=null;
     static get styles() {
         return css`
         #window{
@@ -69,13 +70,15 @@ export class InfectionGraph extends TimelineElement {
         <div id="window">
             <div id="dg"></div>
         </div>
-        <button @click=${this.simulate}>simulate</button>
         `
     }
     simulate(ev: Event) {
-        const worker = new Worker("worker.js");
-        worker.postMessage(serializeSimulation(this.simui.simulation));
-        worker.onmessage = (ev) => {
+        if(this.worker){
+            this.worker.terminate();
+        }
+        this.worker = new Worker("worker.js");
+        this.worker.postMessage(serializeSimulation(this.simui.simulation));
+        this.worker.onmessage = (ev) => {
             if (isSimulationResult(ev.data)) {
                 const list = ev.data;
                 this.graph.updateOptions({

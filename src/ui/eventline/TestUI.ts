@@ -39,6 +39,7 @@ export class TestUI extends LitElement {
         editor.onfinish = () => {
             this.requestUpdate();
             this.eventline.requestUpdate();
+            this.eventline.simui.graph.simulate(null);
         }
         document.body.appendChild(editor);
     }

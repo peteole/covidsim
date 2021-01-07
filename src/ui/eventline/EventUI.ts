@@ -38,6 +38,7 @@ export class EventUI extends LitElement {
         editor.onfinish = () => {
             this.requestUpdate();
             this.timeline.requestUpdate();
+            this.timeline.simui.graph.simulate(null);
         }
         document.body.appendChild(editor);
     }
