@@ -16,6 +16,7 @@ export class Settings extends LitElement {
                 left:10%;
                 top:10%;
                 padding:5px;
+                border:outset;
             }
             .personpreview{
                 border:1px;
@@ -44,6 +45,9 @@ export class Settings extends LitElement {
             <p>Number of simulations to run: <input id="runsin" type="number" .value=${String(this.simui.simRuns)} @change=${() =>
                 this.simui.simRuns = Number.parseFloat((<HTMLInputElement>
                             this.shadowRoot.getElementById("runsin")).value)}></p>
+            <p>Number of datapoints to show per day: <input id="showfreq" type="number" .value=${String(1/this.simui.showInterval)} @change=${() =>
+                                this.simui.showInterval = 1/Number.parseFloat((<HTMLInputElement>
+                                            this.shadowRoot.getElementById("showfreq")).value)}></p>
             <button @click=${()=> { this.simui.eventline.deepUpdate(); this.remove() }}>close</button>
         `
     }

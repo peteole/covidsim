@@ -30,6 +30,7 @@ export class SimUI extends LitElement {
     eventline: Eventline;
     graph: InfectionGraph;
     simRuns: number = 1000000;
+    showInterval: number = 0.1;
     constructor(initialDate: Date) {
         super();
         this.simulation = new Simulation(initialDate);
@@ -42,7 +43,7 @@ export class SimUI extends LitElement {
         return html`
             ${this.timelineElements}
             <footer>
-                <p><button @click=${()=> document.body.appendChild(new Settings(this))}>Settings</button></p>
+                <p><button @click=${() => document.body.appendChild(new Settings(this))}>Settings</button></p>
                 <p>Source code: <a href="https://github.com/peteole/covidsim">https://github.com/peteole/covidsim</a></p>
             </footer>
         `;

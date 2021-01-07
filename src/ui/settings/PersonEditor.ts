@@ -12,7 +12,8 @@ export class PersonEditor extends LitElement {
                 left:30%;
                 top:30%;
                 position:fixed;
-                border:1px;
+                border:outset;
+                padding:5px;
             }
         `
     }

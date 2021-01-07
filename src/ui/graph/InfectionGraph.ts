@@ -89,12 +89,13 @@ export class InfectionGraph extends TimelineElement {
     }
     simulate(ev: Event) {
         const result = this.simulation.simulate(this.simui.simRuns);
-        const list = InfectionGraph.toArray(result, 0.1, this.simulation.lastDate.getTime());
+        const list = InfectionGraph.toArray(result, this.simui.showInterval, this.simulation.lastDate.getTime());
         const graphDiv = this.shadowRoot.getElementById("dg");
         const resultPersons = new Array(...result.totalInfectionProbability.keys());
         graphDiv.style.width = "100%";//((this.simulation.lastDate.getTime() - this.simulation.initialDate.getTime()) * this.scale / 1000 / 60 / 60 / 24) + "px";
         this.graph = new Dygraph(graphDiv, list.map((val) => [val.date, ...val.values]), {
             labels: ["date", ...resultPersons.map(person => person.name)],
+            legend:"always",
             panEdgeFraction: 0,
             underlayCallback: (ctx, area, g) => {
                 const range = g.xAxisRange();
