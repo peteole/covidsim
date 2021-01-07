@@ -5,7 +5,24 @@ import Dygraph from "dygraphs";
 import { TimelineElement } from "../TimelineElement";
 import { SimUI } from "../SimUI";
 import { Person } from "../../logic/Person";
+import { serializeSimulation } from "../../logic/simulationSerialization";
 
+export function isSimulationResult(res: any): res is {
+    array: {
+        date: Date;
+        values: number[];
+    }[];
+    persons: Person[];
+} {
+    if (res["array"]) {
+        if (res.array.length && res.array.length > 0) {
+            const firstEl = res.array[0];
+            if (firstEl.date)
+                return true;
+        }
+    }
+    return false;
+}
 @customElement("infection-graph")
 export class InfectionGraph extends TimelineElement {
     static get styles() {
@@ -55,47 +72,26 @@ export class InfectionGraph extends TimelineElement {
         <button @click=${this.simulate}>simulate</button>
         `
     }
-    /**
-     * 
-     * @param result - simulation result
-     * @param resolution - distance betweeen two timesteps in days
-     */
-    static toArray(result: {
-        initialDate: Date;
-        totalInfectionProbability: Map<Person, number>;
-        infectionTimeline: Map<Person, {
-            date: Date;
-            p: number;
-            pAcc: number;
-        }[]>;
-    }, resolution: number, lastDate: number) {
-        const personArray = new Array(...result.infectionTimeline.keys());
-        const list: { date: Date, values: number[] }[] = []
-        const indices = personArray.map((person) => 0);
-        for (let date = result.initialDate; date.getTime() < lastDate; date = new Date(date.getTime() + resolution * 1000 * 60 * 60 * 24)) {
-            const newValues = new Array(personArray.length);
-            for (let i = 0; i < personArray.length; i++) {
-                const person = personArray[i];
-                const personValues = result.infectionTimeline.get(person);
-                let index = indices[i];
-                while (index + 1 < personValues.length && personValues[index + 1] && personValues[index + 1].date < date)
-                    index++;
-                indices[i] = index;
-                newValues[i] = personValues[index].pAcc;
-            }
-            list.push({ date: date, values: newValues });
-        }
-        return list;
-    }
     simulate(ev: Event) {
-        const result = this.simulation.simulate(this.simui.simRuns);
-        const list = InfectionGraph.toArray(result, this.simui.showInterval, this.simulation.lastDate.getTime());
+        const worker = new Worker("worker.js");
+        worker.postMessage(serializeSimulation(this.simui.simulation));
+        worker.onmessage = (ev) => {
+            if (isSimulationResult(ev.data)) {
+                const list = ev.data;
+                this.graph.updateOptions({
+                    file: list.array.map((val) => [val.date, ...val.values])
+                });
+            }
+        }
+        //const result = this.simulation.simulate(this.simui.simRuns);
+        //const list = Simulation.toArray(result, this.simui.showInterval, this.simulation.lastDate.getTime());
+        const resultPersons = this.simui.simulation.personArray;
+        const list = [{ date: this.simui.simulation.initialDate, values: resultPersons.map((p) => 0) }];
         const graphDiv = this.shadowRoot.getElementById("dg");
-        const resultPersons = new Array(...result.totalInfectionProbability.keys());
         graphDiv.style.width = "100%";//((this.simulation.lastDate.getTime() - this.simulation.initialDate.getTime()) * this.scale / 1000 / 60 / 60 / 24) + "px";
         this.graph = new Dygraph(graphDiv, list.map((val) => [val.date, ...val.values]), {
             labels: ["date", ...resultPersons.map(person => person.name)],
-            legend:"always",
+            legend: "always",
             panEdgeFraction: 0,
             underlayCallback: (ctx, area, g) => {
                 const range = g.xAxisRange();

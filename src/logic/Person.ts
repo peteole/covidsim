@@ -20,7 +20,7 @@ export interface UntrackedContact  {
 export type untrackedContactGenerator=(date:Date,person:Person)=>UntrackedContact;
 
 const defaultContactGenerator:untrackedContactGenerator = (date: Date, person: Person) => ({
-    date: new Date(date.getTime() + 2 * person.untrackedFrequency * Math.random() * algorithmicConstants.dayToMS),
+    date: new Date(date.getTime() + 2 * person.untrackedFrequency * Math.random() * 1000*60*60*24),
     acuteInfected: 0.001 > Math.random(),
     everInfected: 0.01 > Math.random(),
     intensity: 2 * Math.random() * person.untrackedIntensity,

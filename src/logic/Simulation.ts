@@ -147,19 +147,11 @@ export class Simulation {
             result: result
         };
     }
-    /**
-     * 
-     * @param {number} runs 
-     */
-    simulate(runs: number) {
-        /**@type {{result:Map<Person,Date>, probability:number}[]} */
-        const results: { result: Map<Person, Date>; probability: number; }[] = [];
+    processSimulationResults(results: { result: Map<Person, Date>; probability: number; }[]) {
+
         let probabilitySum = 0;
-        for (let i = 0; i < runs; i++) {
-            const result = this.simulateOnce();
-            results.push(result);
+        for (let result of results)
             probabilitySum += result.probability;
-        }
         /**@type {Map<Person,number>} */
         const totalInfectionProbability: Map<Person, number> = new Map();
         for (let person of this.persons) {
@@ -170,12 +162,12 @@ export class Simulation {
         for (let person of this.persons)
             infectionDates.set(person, []);
         for (let result of results) {
-            result.probability /= probabilitySum;
+            const realProb = result.probability / probabilitySum;
 
             for (let person of this.persons) {
                 if (result.result.get(person))
-                    totalInfectionProbability.set(person, totalInfectionProbability.get(person) + result.probability);
-                infectionDates.get(person).push({ date: result.result.get(person), p: result.probability, pAcc: null });
+                    totalInfectionProbability.set(person, totalInfectionProbability.get(person) + realProb);
+                infectionDates.get(person).push({ date: result.result.get(person), p: realProb, pAcc: null });
             }
         }
         for (let person of this.persons) {
@@ -202,6 +194,51 @@ export class Simulation {
             infectionTimeline: infectionDates
         };
     }
+    simulate(runs: number) {
+        const results: { result: Map<Person, Date>; probability: number; }[] = [];
+        for (let i = 0; i < runs; i++) {
+            const result = this.simulateOnce();
+            results.push(result);
+        }
+        return this.processSimulationResults(results);
+    }
+
+    /**
+     * computes an array representation of the simulation results
+     * @param result -simulation result object
+     * @param resolution - number of datapoints to show per day
+     * @param lastDate - last date to simulate in ms from 1970
+     */
+    static toArray(result: {
+        initialDate: Date;
+        totalInfectionProbability: Map<Person, number>;
+        infectionTimeline: Map<Person, {
+            date: Date;
+            p: number;
+            pAcc: number;
+        }[]>;
+    }, resolution: number, lastDate: number) {
+        const personArray = new Array(...result.infectionTimeline.keys());
+        const list: { date: Date, values: number[] }[] = []
+        const indices = personArray.map((person) => 0);
+        for (let date = result.initialDate; date.getTime() < lastDate; date = new Date(date.getTime() + resolution * 1000 * 60 * 60 * 24)) {
+            const newValues = new Array(personArray.length);
+            for (let i = 0; i < personArray.length; i++) {
+                const person = personArray[i];
+                const personValues = result.infectionTimeline.get(person);
+                let index = indices[i];
+                while (index + 1 < personValues.length && personValues[index + 1] && personValues[index + 1].date < date)
+                    index++;
+                indices[i] = index;
+                newValues[i] = personValues[index].pAcc;
+            }
+            list.push({ date: date, values: newValues });
+        }
+        return list;
+    }
+
+
+
     /**returns the persons as array to be able to use Array.map etc */
     get personArray() {
         return new Array(...this.persons);

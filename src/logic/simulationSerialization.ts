@@ -33,8 +33,16 @@ export class SimulationSerialization {
     lastDate: Date;
 }
 
-function isTest(observation: Observation): observation is Test {
+export function isTest(observation: Observation): observation is Test {
     return (observation as Test).date !== null;
+}
+export function isSimulationSerialization(serialization: any): serialization is SimulationSerialization {
+    const p = (serialization as SimulationSerialization).persons[0];
+    if (p) {
+        if (p.activityString)
+            return true;
+    }
+    return false;
 }
 export function serializeSimulation(simulation: Simulation): SimulationSerialization {
     return {
