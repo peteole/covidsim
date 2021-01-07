@@ -4,7 +4,7 @@ import { Virus } from "./Virus";
 import { Observation, Test } from "./Test";
 import { algorithmicConstants } from "./constants";
 
-function isUntracked(contact: UntrackedContact | Contact): contact is UntrackedContact {
+export function isUntracked(contact: UntrackedContact | Contact): contact is UntrackedContact {
     return (contact as UntrackedContact).person !== null;
 }
 /**
@@ -77,7 +77,7 @@ export class Simulation {
                 this.lastDate = o.date;
             }
         }
-        if (this.contacts.length>0&&this.initialDate > this.contacts[0].date) {
+        if (this.contacts.length > 0 && this.initialDate > this.contacts[0].date) {
             this.initialDate = this.contacts[0].date;
         }
     }

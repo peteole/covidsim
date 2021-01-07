@@ -33,12 +33,12 @@ export class Person {
     name: string;
     untrackedFrequency: number;
     untrackedIntensity: number;
-    externalActivity: any;
+    externalActivity: untrackedContactGenerator;
     /**
      * @param {string} name
      * @param {untrackedContactGenerator} externalActivity - generates next contact of person starting at given date
      */
-    constructor(name: string, untrackedFrequency = 1, untrackedIntensity = 0.1, externalActivity = defaultContactGenerator) {
+    constructor(name: string, untrackedFrequency = 1, untrackedIntensity = 0.1, externalActivity:untrackedContactGenerator = defaultContactGenerator) {
         this.externalActivity = externalActivity;
         this.name = name;
         this.untrackedFrequency = untrackedFrequency;
