@@ -1,19 +1,23 @@
-import { Person } from "./Person";
+import { Person, UntrackedContact } from "./Person";
 import { Contact } from "./Contact.js";
 import { Virus } from "./Virus.js";
-import { Observation } from "./Test";
+import { Observation, Test } from "./Test";
 import { algorithmicConstants } from "./constants.js";
 
+function isUntracked(contact: UntrackedContact | Contact): contact is UntrackedContact {
+    return (contact as UntrackedContact).person !== null;
+}
 /**
  * Simulation of an infection. Provides the functionality to simulate the plot many times to approximate probabilities at given test results
  */
 export class Simulation {
-    /**
-     * 
-     * @param {Date} initialDate 
-     * @param {Observation[]} observations 
-     */
-    constructor(initialDate = new Date(), observations = []) {
+    observations: Observation[];
+    initialDate: Date;
+    lastDate: Date;
+    persons: Set<Person>;
+    contacts: Contact[];
+    personToInitialInfectionDate: Map<Person, () => Date>;
+    constructor(initialDate: Date = new Date(), observations: Observation[] = []) {
         this.observations = observations;
         this.initialDate = initialDate;
         this.lastDate = initialDate;
@@ -32,11 +36,11 @@ export class Simulation {
      * @param {Person} person 
      * @param {()=>Date?} dateGenerator -function which generates an initial infection date (or null if no infection happened)
      */
-    setInfectionDateFunction(person, dateGenerator) {
+    setInfectionDateFunction(person: Person, dateGenerator: () => Date | null) {
         this.personToInitialInfectionDate.set(person, dateGenerator);
     }
     /**@param {Person} toAdd */
-    addPerson(toAdd) {
+    addPerson(toAdd: Person) {
         this.persons.add(toAdd);
 
         this.personToInitialInfectionDate.set(toAdd, () => {
@@ -47,7 +51,7 @@ export class Simulation {
         });
     }
     /** @param {Contact} toAdd - contact to be added to the procession list */
-    addContact(toAdd) {
+    addContact(toAdd: Contact) {
         for (let i = 0; i < this.contacts.length; i++) {
             if (toAdd.date.getTime() < this.contacts[i].date.getTime()) {
                 this.contacts.splice(i, 0, toAdd);
@@ -69,11 +73,11 @@ export class Simulation {
             this.lastDate = this.contacts[this.contacts.length - 1].date;
         }
         for (let o of this.observations) {
-            if (o.date && o.date > this.lastDate) {
+            if (o instanceof Test && o.date && o.date > this.lastDate) {
                 this.lastDate = o.date;
             }
         }
-        if (this.initialDate > this.contacts[0]) {
+        if (this.contacts.length>0&&this.initialDate > this.contacts[0].date) {
             this.initialDate = this.contacts[0].date;
         }
     }
@@ -83,15 +87,15 @@ export class Simulation {
         /**
          * @type {Map<Person,Date>}
          */
-        const result = new Map();
-        /**@type {(import("./Person.js").UntrackedContact|Contact)[]} */
-        const events = new Array(...this.contacts);
+        const result: Map<Person, Date> = new Map();
+        /**@type {UntrackedContact|Contact)[]} */
+        const events: (UntrackedContact | Contact)[] = new Array(...this.contacts);
         /**@type {(contact:import("./Person.js").UntrackedContact)=>void} */
-        const addUntrackedContact = (constact) => {
+        const addUntrackedContact: (contact: UntrackedContact) => void = (constact): void => {
             const date = constact.date;
             for (let i in events) {
                 if (events[i].date > date) {
-                    events.splice(i, 0, constact);
+                    events.splice(Number.parseInt(i), 0, constact);
                     return;
                 }
             }
@@ -106,11 +110,12 @@ export class Simulation {
             }
         }
         for (let contact of events) {
-            if (contact.person) {
+            if (isUntracked(contact)) {
                 //contact is untracked. This is only triggered if the other person is infected
                 if (!result.get(contact.person) && Math.random() < contact.intensity) {
                     result.set(contact.person, contact.date);
                 }
+                continue;
             }
             //contact is tracked
             const aDate = result.get(contact.a);
@@ -146,9 +151,9 @@ export class Simulation {
      * 
      * @param {number} runs 
      */
-    simulate(runs) {
+    simulate(runs: number) {
         /**@type {{result:Map<Person,Date>, probability:number}[]} */
-        const results = [];
+        const results: { result: Map<Person, Date>; probability: number; }[] = [];
         let probabilitySum = 0;
         for (let i = 0; i < runs; i++) {
             const result = this.simulateOnce();
@@ -156,12 +161,12 @@ export class Simulation {
             probabilitySum += result.probability;
         }
         /**@type {Map<Person,number>} */
-        const totalInfectionProbability = new Map();
+        const totalInfectionProbability: Map<Person, number> = new Map();
         for (let person of this.persons) {
             totalInfectionProbability.set(person, 0);
         }
         /**@type {Map<Person,{date:Date,p:number, pAcc:number?}[]>} */
-        const infectionDates = new Map();
+        const infectionDates: Map<Person, { date: Date; p: number; pAcc: number | null; }[]> = new Map();
         for (let person of this.persons)
             infectionDates.set(person, []);
         for (let result of results) {
@@ -170,7 +175,7 @@ export class Simulation {
             for (let person of this.persons) {
                 if (result.result.get(person))
                     totalInfectionProbability.set(person, totalInfectionProbability.get(person) + result.probability);
-                infectionDates.get(person).push({ date: result.result.get(person), p: result.probability });
+                infectionDates.get(person).push({ date: result.result.get(person), p: result.probability, pAcc: null });
             }
         }
         for (let person of this.persons) {
