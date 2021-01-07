@@ -78,7 +78,7 @@ export class InfectionGraph extends TimelineElement {
                 const person = personArray[i];
                 const personValues = result.infectionTimeline.get(person);
                 let index = indices[i];
-                while (index + 1 < personValues.length && personValues[index] && personValues[index].date < date)
+                while (index + 1 < personValues.length && personValues[index + 1] && personValues[index + 1].date < date)
                     index++;
                 indices[i] = index;
                 newValues[i] = personValues[index].pAcc;
