@@ -1,6 +1,6 @@
-import { Virus } from "./Virus.js";
+import { Virus } from "./Virus";
 import { Person } from "./Person";
-import { algorithmicConstants } from "./constants.js";
+import { algorithmicConstants } from "./constants";
 
 export class Observation {
     person: Person;

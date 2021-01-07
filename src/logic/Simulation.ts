@@ -1,8 +1,8 @@
 import { Person, UntrackedContact } from "./Person";
-import { Contact } from "./Contact.js";
-import { Virus } from "./Virus.js";
+import { Contact } from "./Contact";
+import { Virus } from "./Virus";
 import { Observation, Test } from "./Test";
-import { algorithmicConstants } from "./constants.js";
+import { algorithmicConstants } from "./constants";
 
 function isUntracked(contact: UntrackedContact | Contact): contact is UntrackedContact {
     return (contact as UntrackedContact).person !== null;
