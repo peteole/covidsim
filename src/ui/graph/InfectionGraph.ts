@@ -64,6 +64,7 @@ export class InfectionGraph extends TimelineElement {
     }
     updated() {
         this.window = <HTMLDivElement>this.shadowRoot.getElementById("window");
+        this.simulate(null);
     }
     render() {
         return html`
@@ -77,6 +78,7 @@ export class InfectionGraph extends TimelineElement {
             this.worker.terminate();
         }
         this.worker = new Worker("worker.js");
+        this.worker.postMessage({resolution:this.simui.resolution, accuracy:this.simui.accuracy});
         this.worker.postMessage(serializeSimulation(this.simui.simulation));
         this.worker.onmessage = (ev) => {
             if (isSimulationResult(ev.data)) {

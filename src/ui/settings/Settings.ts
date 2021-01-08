@@ -42,12 +42,13 @@ export class Settings extends LitElement {
             <button @click=${this.addPerson}>add Person</button>
             <p>Note that all persons must have different names!</p>
             <hr>
-            <p>Number of simulations to run: <input id="runsin" type="number" .value=${String(this.simui.simRuns)} @change=${() =>
-                this.simui.simRuns = Number.parseFloat((<HTMLInputElement>
-                            this.shadowRoot.getElementById("runsin")).value)}></p>
-            <p>Number of datapoints to show per day: <input id="showfreq" type="number" .value=${String(1/this.simui.showInterval)} @change=${() =>
-                                this.simui.showInterval = 1/Number.parseFloat((<HTMLInputElement>
+            <p>Maximum error to allow <input id="maxerror" type="number" .value=${String(this.simui.accuracy)} @change=${() =>
+                this.simui.accuracy = Number.parseFloat((<HTMLInputElement>
+                            this.shadowRoot.getElementById("maxerror")).value)}></p>
+            <p>Number of datapoints to show per day: <input id="showfreq" type="number" .value=${String(1/this.simui.resolution)} @change=${() =>
+                                this.simui.resolution = 1/Number.parseFloat((<HTMLInputElement>
                                             this.shadowRoot.getElementById("showfreq")).value)}></p>
+            <button @click=${()=>{localStorage.removeItem("simulation");window.onbeforeunload=null;location.reload()}}>delete data</button>
             <button @click=${()=> { this.simui.eventline.deepUpdate(); this.remove() }}>close</button>
         `
     }

@@ -37,6 +37,8 @@ export function isTest(observation: Observation): observation is Test {
     return (observation as Test).date !== null;
 }
 export function isSimulationSerialization(serialization: any): serialization is SimulationSerialization {
+    if(!serialization.persons)
+        return false;
     const p = (serialization as SimulationSerialization).persons[0];
     if (p) {
         if (p.activityString)
@@ -121,7 +123,7 @@ export function revive(serialization: SimulationSerialization) {
                 ob.date,
                 ob.positive,
                 ob.sensitivity,
-                ob.sensitivity
+                ob.specificity
             );
             toAdd.relevantTimeStart = ob.relevantTimeStart;
             toAdd.relevantTimeEnd = ob.relevantTimeEnd;
@@ -129,4 +131,19 @@ export function revive(serialization: SimulationSerialization) {
         }
     }
     return sim;
+}
+
+const dateKeys = new Set(["date", "initialDate", "lastDate","relevantTimeStart","relevantTimeEnd"])
+export function tryParseString(jsonString: string) {
+
+    const parsed = JSON.parse(jsonString, (key, val) => {
+        if (dateKeys.has(key))
+            return new Date(val);
+        return val
+    });
+    if (isSimulationSerialization(parsed)) {
+        const simulation = revive(parsed);
+        return simulation;
+    }
+    return null;
 }

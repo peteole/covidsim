@@ -29,11 +29,11 @@ export class SimUI extends LitElement {
     timelineElements: TimelineElement[] = [];
     eventline: Eventline;
     graph: InfectionGraph;
-    simRuns: number = 1000000;
-    showInterval: number = 0.1;
-    constructor(initialDate: Date) {
+    accuracy:number=0.0001;
+    resolution: number = 0.1;
+    constructor(initialDate: Date,simulation:Simulation=new Simulation(initialDate)) {
         super();
-        this.simulation = new Simulation(initialDate);
+        this.simulation = simulation;
         this.graph = new InfectionGraph(this);
         this.timelineElements.push(this.graph);
         this.eventline = new Eventline(this);

@@ -10,6 +10,7 @@ import { SimUI } from "../SimUI";
 import { Test } from "../../logic/Test";
 import { TestUI } from "./TestUI";
 import { TestEditor } from "./TestEditor";
+import { isTest } from "../../logic/simulationSerialization";
 
 @customElement("event-line")
 export class Eventline extends TimelineElement {
@@ -21,8 +22,13 @@ export class Eventline extends TimelineElement {
         this.simulation = simui.simulation;
         this.simui=simui;
         for(let element of this.simulation.contacts){
-            this.addEvent(element);
+            this.events.push(element);
         }
+        for(let observation of this.simulation.observations){
+            if(isTest(observation))
+                this.events.push(observation);
+        }
+        this.deepUpdate();
     }
     onScaleChange(newScale: number): void {
         this.deepUpdate();

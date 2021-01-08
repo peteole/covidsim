@@ -5,7 +5,7 @@ import { Observation, Test } from "./Test";
 import { algorithmicConstants } from "./constants";
 
 export function isUntracked(contact: UntrackedContact | Contact): contact is UntrackedContact {
-    return (contact as UntrackedContact).person !== null;
+    return (contact as UntrackedContact).person != null;
 }
 /**
  * Simulation of an infection. Provides the functionality to simulate the plot many times to approximate probabilities at given test results
