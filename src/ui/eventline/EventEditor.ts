@@ -2,6 +2,7 @@ import { css, customElement, html, LitElement, property } from "lit-element";
 import { Contact } from "../../logic/Contact"
 import { Simulation } from "../../logic/Simulation";
 import { Eventline } from "./Eventline";
+import  "../numberInput/NumberInput";
 @customElement("event-editor")
 export class EventEditor extends LitElement {
     static get styles(){
@@ -14,6 +15,7 @@ export class EventEditor extends LitElement {
             height:50%;
             width:50%;
             background-color:grey;
+            padding:5px;
         }
         `
     }
@@ -53,7 +55,7 @@ export class EventEditor extends LitElement {
                     `})}
             </select>
         </p>
-        <p>Intensity: <input id="in" type="number" .value=${String(this.contact.intensity)} @change=${()=>this.contact.intensity=Number.parseFloat((<HTMLInputElement>this.shadowRoot.getElementById("in")).value)}></p>
+        <number-input initial-value=${this.contact.intensity} @value-change="${(ev:any)=>this.contact.intensity=ev.detail.value}">Intensity</number-input>
         <p>Date of contact: <input id="date" type="date" .valueAsDate=${this.contact.date} @change=${()=>this.contact.date=new Date((<HTMLInputElement>this.shadowRoot.getElementById("date")).value)}></p>
         <button @click=${()=>{this.eventline.removeEvent(this.contact);this.close(null);}}>remove</button>
         <button @click=${this.close}>close</button>

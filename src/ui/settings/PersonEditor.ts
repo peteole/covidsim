@@ -15,6 +15,9 @@ export class PersonEditor extends LitElement {
                 border:outset;
                 padding:5px;
             }
+            input{
+                width:80%;
+            }
         `
     }
     person: Person;
@@ -45,10 +48,7 @@ export class PersonEditor extends LitElement {
                 .value=${String(this.person.untrackedFrequency)} @change=${() => this.person.untrackedFrequency =
                 Number.parseFloat((<HTMLInputElement>
                 this.shadowRoot.getElementById("untrin")).value)}></p>
-        <p>Intensity of untracked contacts per day: <input id="untrintin" type="number"
-                .value=${String(this.person.untrackedIntensity)} @change=${() => this.person.untrackedIntensity =
-                Number.parseFloat((<HTMLInputElement>
-            this.shadowRoot.getElementById("untrintin")).value)}></p>
+        <number-input initial-value=${this.person.untrackedIntensity} @value-change=${(ev:any)=>this.person.untrackedIntensity=ev.detail.value}>Average intensity of untracked contacts</number-input>
         <button @click=${this.delete}>delete person</button>
         <button @click=${this.close}>close</button>
         `;

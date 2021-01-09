@@ -37,7 +37,7 @@ export class Settings extends LitElement {
             <hr>
             <h3>Persons</h3>
             ${this.simulation.personArray.map((person) => html`<p class="personpreview" @click=${()=>
-            this.editPerson(person)}>${person.name} (${person.untrackedFrequency} untracked contacts with
+            this.editPerson(person)}>${person.name} (${person.untrackedFrequency} untracked contacts with intensity 
                 ${person.untrackedIntensity} per day)</p>`)}
             <button @click=${this.addPerson}>add Person</button>
             <p>Note that all persons must have different names!</p>
@@ -49,7 +49,7 @@ export class Settings extends LitElement {
                                 this.simui.resolution = 1/Number.parseFloat((<HTMLInputElement>
                                             this.shadowRoot.getElementById("showfreq")).value)}></p>
             <button @click=${()=>{localStorage.removeItem("simulation");window.onbeforeunload=null;location.reload()}}>delete data</button>
-            <button @click=${()=> { this.simui.eventline.deepUpdate(); this.remove() }}>close</button>
+            <button @click=${()=> { this.simui.eventline.deepUpdate(); this.simui.graph.simulate(null); this.remove() }}>close</button>
         `
     }
     editPerson(person: Person) {

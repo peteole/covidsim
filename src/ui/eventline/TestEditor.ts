@@ -44,8 +44,8 @@ export class TestEditor extends LitElement {
                     `})}
             </select>
         </p>
-        <p>Sensitivity: <input id="sensin" type="number" .value=${String(this.test.sensitivity)} @change=${()=>this.test.sensitivity=Number.parseFloat((<HTMLInputElement>this.shadowRoot.getElementById("sensin")).value)}></p>
-        <p>Specificity: <input id="specin" type="number" .value=${String(this.test.specificity)} @change=${()=>this.test.specificity=Number.parseFloat((<HTMLInputElement>this.shadowRoot.getElementById("specin")).value)}></p>
+        <number-input initial-value=${this.test.sensitivity} @value-change=${(ev:any)=>{this.test.sensitivity=ev.detail.value}}>Sensitivity</number-input>
+        <number-input initial-value=${this.test.specificity} @value-change=${(ev:any)=>{this.test.specificity=ev.detail.value}}>Specificity</number-input>
         <p>Date of test: <input id="date" type="date" .valueAsDate=${this.test.date} @change=${()=>this.test.setDate(new Date((<HTMLInputElement>this.shadowRoot.getElementById("date")).value))}></p>
         <p>Positive?: <input id="posin" type="checkbox" .checked=${this.test.positive} @change=${()=>this.test.positive=((<HTMLInputElement>this.shadowRoot.getElementById("posin")).checked)}></p>
         <button @click=${()=>{this.eventline.removeEvent(this.test);this.close(null);}}>remove</button>
