@@ -10,7 +10,7 @@ export class EventUI extends LitElement {
             :host{
                 position:absolute;
                 width:100px;
-                height:120px;
+                height:180px;
                 background-color:grey;
                 text-align:center;
                 padding:3px;
