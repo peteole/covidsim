@@ -1,5 +1,5 @@
 # covidsim
-Low level covid-19 simulation to evaluate the risk of the contacts you have.
+Low level covid-19 simulation to evaluate the risk of the contacts you have. Demo: https://peteole.github.io/covidsim/dist/home.html
 
 ## Purpose
 Have you ever wondered how bad the effects of a certain contact are in the pandemic? Or what you actually know by doing a test?
