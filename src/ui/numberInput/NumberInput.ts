@@ -8,6 +8,7 @@ export class NumberInput extends LitElement {
             width:80%;
             display:flex;
             flex-direction:row;
+            overflow:auto;
         }
         input{
             flex-grow:10;

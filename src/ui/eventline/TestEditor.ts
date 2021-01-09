@@ -11,11 +11,12 @@ export class TestEditor extends LitElement {
         :host{
             position:fixed;
             z-index:100;
-            left:25%;
-            top:25%;
-            height:50%;
-            width:50%;
+            left:10%;
+            top:10%;
+            height:80%;
+            width:80%;
             background-color:grey;
+            padding:5px;
         }
         `
     }

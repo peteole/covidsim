@@ -8,9 +8,9 @@ export class PersonEditor extends LitElement {
             :host{
                 z-index:150;
                 background-color:grey;
-                width:40%;
-                left:30%;
-                top:30%;
+                width:80%;
+                left:10%;
+                top:10%;
                 position:fixed;
                 border:outset;
                 padding:5px;
