@@ -130,6 +130,7 @@ export function revive(serialization: SimulationSerialization) {
             sim.observations.push(toAdd);
         }
     }
+    sim.refreshContacts();
     return sim;
 }
 

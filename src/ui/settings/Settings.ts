@@ -48,6 +48,9 @@ export class Settings extends LitElement {
             <p>Number of datapoints to show per day: <input id="showfreq" type="number" .value=${String(1/this.simui.resolution)} @change=${() =>
                                 this.simui.resolution = 1/Number.parseFloat((<HTMLInputElement>
                                             this.shadowRoot.getElementById("showfreq")).value)}></p>
+            
+            <p>First date to simulate: <input id="date" type="date" .valueAsDate=${this.simulation.initialDate} @change=${()=>this.simulation.initialDate=new Date((<HTMLInputElement>this.shadowRoot.getElementById("date")).value)}></p>
+            <p>Last date to simulate: <input id="date2" type="date" .valueAsDate=${this.simulation.lastDate} @change=${()=>this.simulation.lastDate=new Date((<HTMLInputElement>this.shadowRoot.getElementById("date2")).value)}></p>
             <button @click=${()=>{localStorage.removeItem("simulation");window.onbeforeunload=null;location.reload()}}>delete data</button>
             <button @click=${()=> { this.simui.eventline.deepUpdate(); this.simui.graph.simulate(null); this.remove() }}>close</button>
         `

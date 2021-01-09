@@ -57,7 +57,7 @@ export class EventEditor extends LitElement {
         </p>
         <number-input initial-value=${this.contact.intensity} @value-change="${(ev:any)=>this.contact.intensity=ev.detail.value}">Intensity</number-input>
         <p>Date of contact: <input id="date" type="date" .valueAsDate=${this.contact.date} @change=${()=>this.contact.date=new Date((<HTMLInputElement>this.shadowRoot.getElementById("date")).value)}></p>
-        <button @click=${()=>{this.eventline.removeEvent(this.contact);this.close(null);}}>remove</button>
+        <button @click=${()=>{this.close(null);this.eventline.removeEvent(this.contact);}}>remove</button>
         <button @click=${this.close}>close</button>
         `
     }

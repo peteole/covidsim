@@ -70,7 +70,9 @@ export class Simulation {
     refreshContacts() {
         this.contacts.sort((a, b) => a.date.getTime() - b.date.getTime());
         if (this.contacts.length > 0) {
-            this.lastDate = this.contacts[this.contacts.length - 1].date;
+            const newLastDate = this.contacts[this.contacts.length - 1].date;
+            if(newLastDate>this.lastDate)
+                this.lastDate=newLastDate;
         }
         for (let o of this.observations) {
             if (o instanceof Test && o.date && o.date > this.lastDate) {
@@ -82,7 +84,6 @@ export class Simulation {
         }
     }
     simulateOnce() {
-        this.refreshContacts();
         const lastDateToSimulate = this.lastDate;
         /**
          * @type {Map<Person,Date>}

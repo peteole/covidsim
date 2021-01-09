@@ -86,12 +86,13 @@ export class Eventline extends TimelineElement {
             this.simulation.observations.push(event);
         }
         this.requestUpdate();
+        this.simui.graph.simulate(null);
     }
     /**remove event via api */
     removeEvent(event: Contact|Test) {
         const index=this.events.indexOf(event);
         if(index==-1){
-            console.exception("event does not exist");
+            console.log("event to remove does not exist");
             return;
         }
         this.events.splice(index,1);
@@ -105,6 +106,7 @@ export class Eventline extends TimelineElement {
         }
         this.simulation.refreshContacts();
         this.requestUpdate();
+        this.simui.graph.simulate(null);
     }
     deepUpdate(){
         this.eventUIs=[];
@@ -157,7 +159,6 @@ export class Eventline extends TimelineElement {
         const newUI=new EventEditor(this);
         newUI.onfinish=()=>{
             this.addEvent(newUI.contact);
-            this.simui.graph.simulate(null);
         }
         this.shadowRoot.appendChild(newUI);
     }
@@ -170,7 +171,6 @@ export class Eventline extends TimelineElement {
         const newUI=new TestEditor(this);
         newUI.onfinish=()=>{
             this.addEvent(newUI.test);
-            this.simui.graph.simulate(null);
         }
         this.shadowRoot.appendChild(newUI);
     }
