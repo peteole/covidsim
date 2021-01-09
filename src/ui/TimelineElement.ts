@@ -8,10 +8,6 @@ export abstract class TimelineElement extends LitElement {
             }
         `
     }
-    @property({
-        attribute: true,
-        type: Number
-    })
     scale: number = 100
     @property({ attribute: true, type: Number })
     width: number

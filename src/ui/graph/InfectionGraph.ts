@@ -25,7 +25,7 @@ export function isSimulationResult(res: any): res is {
 }
 @customElement("infection-graph")
 export class InfectionGraph extends TimelineElement {
-    worker: Worker|null=null;
+    worker: Worker | null = null;
     static get styles() {
         return css`
         #window{
@@ -38,8 +38,8 @@ export class InfectionGraph extends TimelineElement {
         `
     }
     onScaleChange(newScale: number): void {
-        this.requestUpdate();
-        //this.simulate(null);
+        //this.onDateChange()
+        //this.simulate(null);reue ich mich, wenn Sie mit mir Kontakt aufnehmen.
     }
     onDateChange(newDateBeginning: Date): void {
         //const newScrollingPosition = (newDateBeginning.getTime() - this.simulation.initialDate.getTime()) * this.scale / 1000 / 60 / 60 / 24;
@@ -64,7 +64,9 @@ export class InfectionGraph extends TimelineElement {
     }
     updated() {
         this.window = <HTMLDivElement>this.shadowRoot.getElementById("window");
+
         this.simulate(null);
+
     }
     render() {
         return html`
@@ -74,11 +76,11 @@ export class InfectionGraph extends TimelineElement {
         `
     }
     simulate(ev: Event) {
-        if(this.worker){
+        if (this.worker) {
             this.worker.terminate();
         }
         this.worker = new Worker("worker.js");
-        this.worker.postMessage({resolution:this.simui.resolution, accuracy:this.simui.accuracy});
+        this.worker.postMessage({ resolution: this.simui.resolution, accuracy: this.simui.accuracy });
         this.worker.postMessage(serializeSimulation(this.simui.simulation));
         this.worker.onmessage = (ev) => {
             if (isSimulationResult(ev.data)) {
